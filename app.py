@@ -1,8 +1,7 @@
-from project.UI.main_page import MainPage
+from project.UI import side_bar
 
 def run_app():
-    app = MainPage()
-    app.run()
+    side_bar.SideBar()
 
 if __name__ == "__main__":
     run_app()

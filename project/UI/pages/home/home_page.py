@@ -1,13 +1,12 @@
 import streamlit as st
 
+from project.tools.time_coverter.time_converter_ui import TimeConverter
+
 class HomePage:
     
     def __init__(self):
-        pass
-    
-    def run(self):
+        self.time_converter = TimeConverter()
         self._app_config()
-        self._display_content()
     
     def _app_config(self):
         try:
@@ -20,7 +19,7 @@ class HomePage:
         except Exception as e:
             st.error(f"Error setting page config: {e}")
     
-    def _display_content(self):
+    def render_home_page(self):
         try:
             st.title("Welcome to Smart Tools Home Page 🏠")
             st.write("Below you will find Smart tools to enhance your productivity.")
@@ -28,7 +27,7 @@ class HomePage:
             
             self.tabs()
             
-            
+        
         except Exception as e:
             st.error(f"Error displaying content: {e}")
             
@@ -37,9 +36,7 @@ class HomePage:
             time_converter_tab, json_formatter_tab = st.tabs(["Time Converter ⏰", "JSON Formatter 📄"])
             
             with time_converter_tab:
-                st.header("Time Converter ⏰")
-                st.write("Convert time between different formats and time zones.")
-                
+                self.time_converter.create_ui()
             with json_formatter_tab:
                 st.header("JSON Formatter 📄")
                 st.write("Format and validate your JSON data easily.")
