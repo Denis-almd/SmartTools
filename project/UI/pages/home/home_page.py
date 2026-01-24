@@ -1,45 +1,38 @@
 import streamlit as st
+from project.tools.tool_manager import ToolRegister
+from project.UI.pages.base_page import BasePage
 
-from project.tools.time_coverter.time_converter_ui import TimeConverter
-
-class HomePage:
+class HomePage(BasePage):
     
     def __init__(self):
-        self.time_converter = TimeConverter()
-        self._app_config()
+        self.tools = ToolRegister.get_tools()
+        
+    def get_name(self):
+        return 'Home'
     
-    def _app_config(self):
-        try:
-            st.set_page_config(
-                page_title="Home Page",
-                page_icon="🏠",
-                layout="wide",
-                initial_sidebar_state="expanded"
-            )
-        except Exception as e:
-            st.error(f"Error setting page config: {e}")
-    
-    def render_home_page(self):
+    def render(self):
         try:
             st.title("Welcome to Smart Tools Home Page 🏠")
             st.write("Below you will find Smart tools to enhance your productivity.")
-            st.divider()
+            #st.divider()
             
-            self.tabs()
-            
-        
+            self._tabs()
         except Exception as e:
             st.error(f"Error displaying content: {e}")
             
-    def tabs(self):
-        try:
-            time_converter_tab, json_formatter_tab = st.tabs(["Time Converter ⏰", "JSON Formatter 📄"])
-            
-            with time_converter_tab:
-                self.time_converter.create_ui()
-            with json_formatter_tab:
-                st.header("JSON Formatter 📄")
-                st.write("Format and validate your JSON data easily.")
+    def _tabs(self):
+        
+        if not self.tools:
+            st.info("No tools available.")
+            return
+        
+        tab_labels = [f"{tool.get_icon()} {tool.get_name()}" for tool in self.tools]
+        tabs = st.tabs(tab_labels)
+        
+        for tab, tool in zip(tabs, self.tools):
+            with tab:
+                try:
+                    tool.render()
+                except Exception as e:
+                    st.error(f"Error loading tool '{tool.get_name()}': {e}")
                 
-        except Exception as e:
-            st.error(f"Error creating tabs: {e}")
