@@ -37,12 +37,12 @@ class BaseReader:
     def safe_read(self):
         try:
             if self.file_obj is None:
-                raise ValueError("Nenhum arquivo foi fornecido")
+                raise ValueError("No file was provided")
             
             return self.read()
         
         except Exception as e:
-            print(f"❌ Erro ao ler arquivo: {e}")
+            print(f"❌ Error reading file: {e}")
             return None
     
     def validate(self) -> bool:

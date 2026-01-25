@@ -23,14 +23,14 @@ class ExcelReader(BaseReader):
             )
             return self
         except Exception as e:
-            raise ValueError(f"Erro ao ler arquivo Excel: {e}")
+            raise ValueError(f"Error reading Excel file: {e}")
     
     def validate(self) -> bool:
         if self.df is None:
             return False
         
         if self.df.empty:
-            print("⚠️ Aviso: DataFrame está vazio")
+            print("⚠️ Warning: DataFrame is empty")
             return False
         
         return True
