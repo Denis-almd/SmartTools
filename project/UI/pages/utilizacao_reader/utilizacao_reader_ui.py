@@ -1,52 +1,56 @@
 import streamlit as st
-from project.UI.pages.base_page import BasePage
+from project.UI.pages.reader_base_page import PageBaseReader
+from project.readers.excel_reader import ExcelReader
 
-class UtilizacaoReader(BasePage):
-    def get_name(self) -> str:
-        return "Utilização Reader"
+class UtilizacaoReader(PageBaseReader):
+    """
+    Página para análise do relatório de utilização de.
     
-    def get_icon(self) -> str:
-        return "📖"
+    Exemplo de uso da arquitetura de leitores.
+    Aceita arquivos Excel com colunas: LeitorID, DataHora, Evento
+    """
     
-    def get_description(self) -> str:
-        return "Read and analyze utilização data from ."
+    def __init__(self):
+        super().__init__(
+            page_name="Relatório de Utilização de Leitores",
+            reader_class=ExcelReader,
+            icon="📚",
+            description="📈 Analise os dados de utilização dos leitores de forma eficiente."
+        )
+    
+    def get_file_types(self):
+        """Aceita apenas arquivos Excel."""
+        return ['xlsx', 'xls']
+    
+    def process_data(self):
+        """
+        Processa os dados específicos do relatório de utilização de leitores.
+        Adiciona colunas calculadas e converte tipos.
+        """
+        df = self.reader.df
+        
+        # Converte nomes de colunas para minúsculas e remove espaços
+        df.columns = df.columns.str.lower().str.strip()
+        
+        # Verifica se as colunas necessárias existem
+        required_columns = ['leitorid', 'datahora']
+        missing_columns = [col for col in required_columns if col not in df.columns]
+        
+        if missing_columns:
+            st.warning(f"⚠️ Colunas não encontradas: {', '.join(missing_columns)}")
+        else:
+            # Converte coluna de datahora
+            try:
+                df['datahora'] = pd.to_datetime(df['datahora'])
+            except:
+                st.warning("⚠️ Não foi possível converter a coluna 'DataHora'")
+        
+        # Atualiza o DataFrame no reader
+        self.reader.df = df
+    
+    def display_results(self):
+        """Exibição customizada para relatório de utilização de leitores."""
+        df = self.reader.df
 
-    def render(self):
-        st.header("Welcome to Utilização report Reader 📖")
-        st.write("This tool allows you to read and analyze utilização report data.")
-        # Additional UI components and logic for the Utilização Reader can be added here.
-        self._file_upload()
-        
-        
-    def _file_upload(self):
-        try:
-            uploaded_file = st.file_uploader("Upload your utilização report data file", type=["csv", "xlsx", "txt"])
-        except Exception as e:
-            st.error(f"Error uploading file: {e}")            
-            
-        if uploaded_file:        
-            with st.spinner("loading file... Please wait."):                
-               data = self._load_file(uploaded_file)
-            
-            if data is not None:
-                st.success("File loaded successfully!")
-                st.dataframe(data.head())
-            else:
-                st.error("Failed to load the file. Please check the file format and try again.")
-    
-    @st.cache_data            
-    def _load_file(self, file):
-        try:
-            import pandas as pd
-            if file.name.endswith('.csv'):
-                return pd.read_csv(file)
-            elif file.name.endswith('.xlsx'):
-                return pd.read_excel(file)
-            elif file.name.endswith('.txt'):
-                return pd.read_csv(file, delimiter='\t')
-            else:
-                st.error("Unsupported file format.")
-                return None
-        except Exception as e:
-            st.error(f"Error reading file: {e}")
-            return None
+
+

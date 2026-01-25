@@ -8,7 +8,6 @@ class PageManager:
     
     _pages: list[type[BasePage]] = [
         HomePage,
-        UtilizacaoReader,
         AboutPage
     ]
     
