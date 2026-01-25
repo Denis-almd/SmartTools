@@ -22,9 +22,10 @@ class TimeConverter(BaseTool):
                 "Time:", 
                 placeholder="01:30:45",
                 key="time_to_sec",
-                help="Format: HH:MM:SS"
+                help="Format: HH:MM:SS",
+                value="00:00:00"
             )
-            if time_input:
+            if time_input and time_input != "00:00:00":
                 self._convert_time_to_seconds(time_input)
     
         with col2:

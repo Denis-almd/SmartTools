@@ -1,7 +1,6 @@
 import streamlit as st
 from project.UI.side_bar import SideBar
 
-
 APP_CONFIG = {
     "page_title": "Smart Tools",
     "page_icon": "🏠",
