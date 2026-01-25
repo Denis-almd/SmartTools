@@ -3,8 +3,7 @@ from project.UI.pages.base_page import BasePage
 from project.readers.excel_reader import ExcelReader
 
 
-class PageBaseReader(BasePage):
-    
+class PageBaseReader(BasePage):    
     def __init__(self, page_name: str, reader_class = ExcelReader, icon: str = "📊", description: str = ""):
         self.page_name = page_name
         self.reader_class = reader_class
@@ -21,7 +20,7 @@ class PageBaseReader(BasePage):
     def get_description(self) -> str:
         return self._description or f"Analysis of {self.page_name}"
     
-    def render(self):
+    def render(self) -> None:
         st.title(f"{self._icon} {self.page_name}")
         
         if self._description:
@@ -41,8 +40,8 @@ class PageBaseReader(BasePage):
             with col2:
                 st.info(f"**Size:** {uploaded_file.size / 1024:.1f} KB")
             
-            if st.button("🚀 Process File", type="primary", use_container_width=True):
-                self._process_file(uploaded_file)
+            self._process_file(uploaded_file)
+    
     
     def _process_file(self, uploaded_file):
         with st.spinner("⏳ Processing file..."):
@@ -68,7 +67,7 @@ class PageBaseReader(BasePage):
                 st.error(f"❌ Unexpected error: {e}")
     
     def get_file_types(self):
-        return ['csv', 'xlsx', 'xls']
+        return ["xlsx", "xls"]
     
     def process_data(self):
         pass
