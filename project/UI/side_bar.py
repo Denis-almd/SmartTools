@@ -24,6 +24,5 @@ class SideBar:
                     if page.get_name() == selection:
                         page.render()
                         break
-            
         except Exception as e:
             st.sidebar.error(f"Error rendering sidebar: {e}")
