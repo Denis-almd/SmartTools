@@ -2,39 +2,35 @@ import pandas as pd
 
 class BaseReader:
     
-    def __init__(self, file_obj = None, encoding: str = 'utf-8', delimiter: str = ';', header: int = 0, skiprows: int = 0, **kwargs) -> None:
-        self.file_obj = file_obj
+    def __init__(self, file_obj = None, encoding: str = 'utf-8', header: int = 0, skiprows: int = 0, dtype: dict | str = 'str', **kwargs) -> None:
+        self.file_obj: any = file_obj
         self.encoding:str = encoding
-        self.delimiter = delimiter
-        self.header = header
-        self.skiprows = skiprows
-        self.reader_config = kwargs
+        self.header: int = header
+        self.skiprows: int = skiprows
+        self.dtype: dict | str = dtype
+        self.reader_config: dict = kwargs
         self.df: pd.DataFrame | None = None
     
-    def set_file_obj(self, file_obj):
+    def set_file_obj(self, file_obj) -> 'BaseReader':
         self.file_obj = file_obj
         return self
     
-    def set_encoding(self, encoding: str):
+    def set_encoding(self, encoding: str) -> 'BaseReader':
         self.encoding = encoding
         return self
     
-    def set_delimiter(self, delimiter: str):
-        self.delimiter = delimiter
-        return self
-    
-    def set_header(self, header: int):
+    def set_header(self, header: int) -> 'BaseReader':
         self.header = header
         return self
     
-    def set_config(self, key: str, value):
+    def set_config(self, key: str, value) -> 'BaseReader':
         self.reader_config[key] = value
         return self
     
-    def read(self):
+    def read(self) -> 'BaseReader':
         raise NotImplementedError("Subclasses must implement this method")
     
-    def safe_read(self):
+    def safe_read(self) -> 'BaseReader | None':
         try:
             if self.file_obj is None:
                 raise ValueError("No file was provided")

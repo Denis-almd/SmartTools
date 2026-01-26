@@ -4,8 +4,8 @@ from project.readers.base_reader import BaseReader
 
 class ExcelReader(BaseReader):
     
-    def __init__(self, file_obj=None, encoding: str = 'utf-8', sheet_name: int | str = 0, **kwargs):
-        super().__init__(file_obj, encoding, **kwargs)
+    def __init__(self, file_obj=None, sheet_name: int | str = 0, **kwargs):
+        super().__init__(file_obj, **kwargs)
         self.sheet_name = sheet_name
     
     def set_sheet_name(self, sheet_name: int | str):
@@ -19,6 +19,7 @@ class ExcelReader(BaseReader):
                 sheet_name=self.sheet_name,
                 header=self.header,
                 skiprows=self.skiprows,
+                dtype=self.dtype,
                 **self.reader_config
             )
             return self
