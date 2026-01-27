@@ -1,3 +1,4 @@
+from typing import Optional, Any
 from project.UI.pages.page_base_reader import PageBaseReader
 import streamlit as st
 import pandas as pd
@@ -8,14 +9,21 @@ import warnings
 warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
 
 class UtilizacaoReader(PageBaseReader):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__(
             page_name="Utilização Reader",
             icon="📚",
             description="Page for Utilização reports analysis."
         )
+        self.reader: Optional[ExcelReader] = None
+        self.df_inconsistencias: Optional[pd.DataFrame] = None
     
-    def _process_file(self, uploaded_file):
+    def _process_file(self, uploaded_file: Any) -> None:
+        """Process the uploaded Utilização file.
+        
+        Args:
+            uploaded_file: Streamlit UploadedFile object
+        """
         with st.spinner("⏳ Processing Utilização file..."):
             try:
                 self.reader = ExcelReader(file_obj=uploaded_file, header=3)
@@ -28,11 +36,21 @@ class UtilizacaoReader(PageBaseReader):
                         self.process_data()
                     except Exception as e:
                         st.error(f"❌ Processing error: {e}")
+                        return
+                    
+                    self.display_results()
+                else:
+                    st.error("❌ Error reading file. Please check the format and try again.")
             except Exception as e:
                 st.error(f"❌ Unexpected error: {e}")
     
     
-    def process_data(self):
+    def process_data(self) -> None:
+        """Process data to find KM inconsistencies between consecutive records."""
+        if self.reader is None or self.reader.df is None:
+            st.error("❌ No data loaded. Please upload a file first.")
+            return
+        
         df = self.reader.df
         
         #df = df.dropna(subset=['Km Inicial', 'Km Final'], how='any')
@@ -48,7 +66,7 @@ class UtilizacaoReader(PageBaseReader):
         inconsistencias = []
         
         for veiculo in df['Veículo'].unique():
-            df_veiculo = df[df['Veículo'] == veiculo]
+            df_veiculo: pd.DataFrame = df[df['Veículo'] == veiculo]
             
             for i in range(1, len(df_veiculo)):
                 km_final_anterior = df_veiculo.iloc[i-1]['Km Final']
@@ -56,20 +74,23 @@ class UtilizacaoReader(PageBaseReader):
                     
                 if pd.notna(km_final_anterior) and pd.notna(km_inicial_atual):
                     if km_final_anterior != km_inicial_atual:
-                        inconsistencias.append({
-                            'Veículo': veiculo,
-                            'Data Anterior': df_veiculo.iloc[i-1]['Data'],
-                            'Km Final Anterior': km_final_anterior,
-                            'Data Atual': df_veiculo.iloc[i]['Data'],
-                            'Km Inicial Atual': km_inicial_atual,
-                            'Diferença': km_inicial_atual - km_final_anterior
-                        })
+                        diferenca = km_inicial_atual - km_final_anterior
+                        if diferenca > 10 or diferenca < 0:
+                            inconsistencias.append({
+                                'Veículo': veiculo,
+                                'Data Anterior': df_veiculo.iloc[i-1]['Data'],
+                                'Km Final Anterior': km_final_anterior,
+                                'Data Atual': df_veiculo.iloc[i]['Data'],
+                                'Km Inicial Atual': km_inicial_atual,
+                                'Diferença': km_inicial_atual - km_final_anterior
+                            })
         
         self.reader.df = df
         self.df_inconsistencias = pd.DataFrame(inconsistencias) if inconsistencias else None
         self.display_results()
     
-    def display_results(self):
+    def display_results(self) -> None:
+        """Display the inconsistencies results and provide download option."""
         if self.df_inconsistencias is not None and len(self.df_inconsistencias) > 0:
             st.subheader("⚠️ KM Inconsistencies")
             st.warning(f"Found {len(self.df_inconsistencias)} inconsistencies where KM Final ≠ KM Inicial")
@@ -83,7 +104,7 @@ class UtilizacaoReader(PageBaseReader):
             st.download_button(
                 label="📥 Download Inconsistencies (Excel)",
                 data=buffer,
-                file_name="km_inconsistencies.xlsx",
+                file_name="inconsistencias.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             )
         else:
