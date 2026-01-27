@@ -2,12 +2,12 @@ import pandas as pd
 
 class BaseReader:
     
-    def __init__(self, file_obj = None, encoding: str = 'utf-8', header: int = 0, skiprows: int = 0, dtype: dict | str = 'str', **kwargs) -> None:
-        self.file_obj: any = file_obj
+    def __init__(self, file_obj = None, encoding: str = 'utf-8', header: int = 0, skiprows: int = 0, dtype: dict | type = str, **kwargs) -> None:
+        self.file_obj = file_obj
         self.encoding:str = encoding
         self.header: int = header
         self.skiprows: int = skiprows
-        self.dtype: dict | str = dtype
+        self.dtype: dict | type = dtype
         self.reader_config: dict = kwargs
         self.df: pd.DataFrame | None = None
     
