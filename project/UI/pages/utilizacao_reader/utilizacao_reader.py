@@ -87,7 +87,6 @@ class UtilizacaoReader(PageBaseReader):
         
         self.reader.df = df
         self.df_inconsistencias = pd.DataFrame(inconsistencias) if inconsistencias else None
-        self.display_results()
     
     def display_results(self) -> None:
         """Display the inconsistencies results and provide download option."""
