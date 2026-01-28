@@ -47,10 +47,9 @@ class PageBaseReader(BasePage):
         with st.spinner("⏳ Processing file..."):
             try:
                 self.reader = self.reader_class(file_obj=uploaded_file)
+                self.reader.safe_read()
                 
-                result = self.reader.safe_read()
-                
-                if result and self.reader.df is not None:
+                if self.reader.df is not None:
                     st.success("✅ File read successfully!")
                     
                     try:

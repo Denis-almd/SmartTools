@@ -27,19 +27,20 @@ class BaseReader:
         self.reader_config[key] = value
         return self
     
-    def read(self) -> 'BaseReader':
+    def read(self) -> None:
         raise NotImplementedError("Subclasses must implement this method")
     
-    def safe_read(self) -> 'BaseReader | None':
+    def safe_read(self) -> bool:
         try:
             if self.file_obj is None:
                 raise ValueError("No file was provided")
             
-            return self.read()
+            self.read()
+            return True
         
         except Exception as e:
             print(f"❌ Error reading file: {e}")
-            return None
+            return False
     
     def validate(self) -> bool:
         raise NotImplementedError("Subclasses must implement this method")

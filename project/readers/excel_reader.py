@@ -12,7 +12,7 @@ class ExcelReader(BaseReader):
         self.sheet_name = sheet_name
         return self
     
-    def read(self):
+    def read(self) -> None:
         try:
             self.df = pd.read_excel(
                 self.file_obj,
@@ -22,7 +22,6 @@ class ExcelReader(BaseReader):
                 dtype=self.dtype,
                 **self.reader_config
             )
-            return self
         except Exception as e:
             raise ValueError(f"Error reading Excel file: {e}")
     

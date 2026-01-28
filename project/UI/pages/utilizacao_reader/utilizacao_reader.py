@@ -27,10 +27,9 @@ class UtilizacaoReader(PageBaseReader):
         with st.spinner("⏳ Processing Utilização file..."):
             try:
                 self.reader = ExcelReader(file_obj=uploaded_file, header=3)
+                self.reader.safe_read()
                 
-                result = self.reader.safe_read()
-                
-                if result and self.reader.df is not None:
+                if self.reader.df is not None:
                     st.success(f"✅ {self.reader.file_obj.name} file read successfully!")
                     try:
                         self.process_data()
@@ -51,7 +50,7 @@ class UtilizacaoReader(PageBaseReader):
             st.error("❌ No data loaded. Please upload a file first.")
             return
         
-        df = self.reader.df
+        df = self.reader.df.copy()
         
         #df = df.dropna(subset=['Km Inicial', 'Km Final'], how='any')
         
