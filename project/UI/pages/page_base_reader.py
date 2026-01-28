@@ -74,4 +74,4 @@ class PageBaseReader(BasePage):
     
     def display_results(self):
         st.subheader("📋 Loaded Data")
-        st.dataframe(self.reader.df, use_container_width=True)
+        st.dataframe(self.reader.df, width='content', hide_index=True)

@@ -12,7 +12,6 @@ class BDVConsolidadoReaderUI(PageBaseReader):
             description="Page for BDV Consolidado reports analysis."
         )
         self.reader: Optional[ExcelReader] = None
-        self.df_summary: Optional[pd.DataFrame] = None
     
     def _process_file(self, uploaded_file: Any) -> None:
         """Process the uploaded BDV Consolidado file.
@@ -22,7 +21,7 @@ class BDVConsolidadoReaderUI(PageBaseReader):
         """
         with st.spinner("⏳ Processing BDV Consolidado file..."):
             try:
-                self.reader = ExcelReader(file_obj=uploaded_file, header=2)
+                self.reader = ExcelReader(file_obj=uploaded_file)
                 
                 result = self.reader.safe_read()
                 
@@ -40,3 +39,5 @@ class BDVConsolidadoReaderUI(PageBaseReader):
             except Exception as e:
                 st.error(f"❌ Unexpected error: {e}")
     
+    def process_data(self) -> None:
+        st.success("Processing data...")
