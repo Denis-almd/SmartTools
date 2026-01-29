@@ -26,7 +26,8 @@ class BDVConsolidadoReaderUI(PageBaseReader):
         uploaded_file = st.file_uploader(
             "📁 Upload your file",
             type=self.get_file_types(),
-            help=f"Accepted formats: {', '.join(self.get_file_types())}"
+            help=f"Accepted formats: {', '.join(self.get_file_types())}",
+            key="bdv_consolidado_file_uploader"
         )
         
         if uploaded_file:
@@ -79,7 +80,6 @@ class BDVConsolidadoReaderUI(PageBaseReader):
         
         df['Velocidade média'] = df.apply(lambda row: ((row['Km Rodado'] * 1000) / self._time_to_seconds(row['Tempo']) * 3.6) if self._time_to_seconds(row['Tempo']) > 0 else 0, axis=1)
         
-        # Get threshold with fallback to default
         threshold = st.session_state.get('avg_speed_threshold', 100)
         df['Status'] = df.apply(lambda row: 'Negative odometer' if row['Km Rodado'] < 0 else ('Over speed' if row['Velocidade média'] > threshold else 'OK'), axis=1)
         
@@ -112,12 +112,10 @@ class BDVConsolidadoReaderUI(PageBaseReader):
             st.warning("⚠️ It seems there are records with issues:")
             df_issues = self.reader.df[self.reader.df['Status'].isin(['Over speed', 'Negative odometer'])][columns_to_show].copy()
             
-            # Format for display
             df_display = df_issues.copy()
             df_display['Velocidade média'] = df_display['Velocidade média'].round(2).astype(str) + " km/h"
             st.dataframe(df_display.reset_index(drop=True), width='stretch', hide_index=True)
             
-            # Prepare download (with numeric values for Excel)
             df_issues['Velocidade média'] = df_issues['Velocidade média'].round(2)
             buffer = BytesIO()
             with pd.ExcelWriter(buffer, engine='xlsxwriter') as writer:
@@ -128,7 +126,7 @@ class BDVConsolidadoReaderUI(PageBaseReader):
                 data=buffer.getvalue(),
                 file_name="bdv_consolidado_issues_report.xlsx",
                 mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                key="download_issues"
+                key="bdv_download_issues"
             )
         else:
             st.success("✅ All records are OK.")

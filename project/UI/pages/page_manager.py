@@ -16,7 +16,13 @@ class PageManager:
     
     @classmethod
     def get_pages(cls) -> list[type[BasePage]]:
+        """Returns new instances of all pages (legacy method)."""
         return [page() for page in cls._pages]
+    
+    @classmethod
+    def get_page_classes(cls) -> list[type[BasePage]]:
+        """Returns the page classes (not instances) to allow fresh instantiation."""
+        return cls._pages
     
     @classmethod
     def register_page(cls, page: type[BasePage]):

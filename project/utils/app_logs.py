@@ -25,31 +25,25 @@ def setup_logger(
     """
     logger = logging.getLogger(name)
     
-    # Evitar duplicação de handlers
     if logger.handlers:
         return logger
     
     logger.setLevel(level)
     
-    # Formato: Data/Hora - Nível - [Arquivo:Linha] - Mensagem
     formatter = logging.Formatter(
         fmt='%(asctime)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S'
     )
     
-    # Handler para console
     console_handler = logging.StreamHandler()
     console_handler.setLevel(level)
     console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
     
-    # Handler para arquivo
     try:
-        # Criar diretório de logs
         log_path = Path(log_dir)
         log_path.mkdir(exist_ok=True)
         
-        # Nome do arquivo: smarttools_YYYYMMDD.log
         log_filename = f"smarttools_{datetime.now().strftime('%Y%m%d')}.log"
         file_path = log_path / log_filename
         
@@ -64,11 +58,9 @@ def setup_logger(
     return logger
 
 
-# Logger global da aplicação
 app_logger = setup_logger()
 
 
-# Funções de conveniência
 def info(msg: str):
     """Log informativo."""
     app_logger.info(msg)

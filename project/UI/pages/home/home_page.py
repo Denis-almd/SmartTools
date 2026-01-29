@@ -14,7 +14,6 @@ class HomePage(BasePage):
         try:
             st.title("Welcome to Smart Tools Home Page 🏠")
             st.write("Below you will find Smart tools to enhance your productivity.")
-            #st.divider()
             
             self._tabs()
         except Exception as e:

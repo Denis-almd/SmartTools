@@ -52,15 +52,11 @@ class UtilizacaoReader(PageBaseReader):
         
         df = self.reader.df.copy()
         
-        #df = df.dropna(subset=['Km Inicial', 'Km Final'], how='any')
-        
         if 'Km Inicial' in df.columns:
             df['Km Inicial'] = pd.to_numeric(df['Km Inicial'], errors='coerce')
         
         if 'Km Final' in df.columns:
             df['Km Final'] = pd.to_numeric(df['Km Final'], errors='coerce')
-        
-        #df = df.sort_values(['Veículo', 'Data']).reset_index(drop=True)
         
         inconsistencias = []
         
@@ -103,7 +99,8 @@ class UtilizacaoReader(PageBaseReader):
                 label="📥 Download Inconsistencies (Excel)",
                 data=buffer,
                 file_name="inconsistencias.xlsx",
-                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                key="utilizacao_download_inconsistencies"
             )
         else:
             st.success("✅ No KM inconsistencies found! All odometer readings are continuous.")

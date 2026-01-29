@@ -27,10 +27,12 @@ class PageBaseReader(BasePage):
             st.markdown(self._description)
             st.divider()
         
+        file_uploader_key = f"{self.page_name.lower().replace(' ', '_')}_file_uploader"
         uploaded_file = st.file_uploader(
             "📁 Upload your file",
             type=self.get_file_types(),
-            help=f"Accepted formats: {', '.join(self.get_file_types())}"
+            help=f"Accepted formats: {', '.join(self.get_file_types())}",
+            key=file_uploader_key
         )
         
         if uploaded_file:
