@@ -16,23 +16,23 @@ class Password_generator(BaseTool):
         with st.container():
             st.header("Password Generator")
             length = st.slider("Password Length", min_value=8, max_value=64, value=12)
-            uppercase = st.checkbox("Include Uppercase Letters")
-            lowercase = st.checkbox("Include Lowercase Letters")
-            numbers = st.checkbox("Include Numbers")
-            symbols = st.checkbox("Include Symbols")
+            uppercase = st.checkbox("Include Uppercase Letters", value=True)
+            lowercase = st.checkbox("Include Lowercase Letters", value=True)
+            numbers = st.checkbox("Include Numbers", value=True)
+            symbols = st.checkbox("Include Symbols", value=True)
             
             if st.button("Generate Password"):
                 password = self._generate_password(length, uppercase, lowercase, numbers, symbols)
                 if password:
                     #st.success(f"Generated Password: {password}")
-                    st.code(password, language="text")
+                    st.code(password, language="text", width='content')
             
     def _generate_password(self, length, uppercase, lowercase, numbers, symbols):
         import random
         import string
         
         # conservative set of symbols commonly accepted by sites
-        accepted_symbols = "!@#$%&*()-_+=[]{}<>?.,;:/^"
+        accepted_symbols = "!@#$%&*()-_+=[]<>?.,;:^"
 
         base_password = ""
         if uppercase:
